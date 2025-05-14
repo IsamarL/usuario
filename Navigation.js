@@ -1,20 +1,15 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import ListarProductos from './Screens/ListarProductos';
+import AgregarProducto from './Screen/AgregarProducto';
 
-// Importa las pantallas
-import RegistroScreen from './screens/RegistroScreen';
-import ListarScreen from './screens/ListarScreen';
+const Stack = createStackNavigator();
 
-const Stack = createNativeStackNavigator();
-
-export default function Navigation() {
+export default function Navegacion() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Registro">
-        <Stack.Screen name="Registro" component={RegistroScreen} />
-        <Stack.Screen name="Listar" component={ListarScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen name="ListarProductos" component={ListarProductos} options={{ title: 'Lista de Productos' }} />
+      <Stack.Screen name="AgregarProducto" component={AgregarProducto} options={{ title: 'Agregar Producto' }} />
+    </Stack.Navigator>
   );
 }
