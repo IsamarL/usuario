@@ -2,12 +2,43 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../BasedeDatos/Firebase'; // Asegúrate de que la ruta sea correcta
+
 
 export default function ListarProductos() {
   const [productos, setProductos] = useState([]);
   const navigation = useNavigation();
 
+  useEffect(() => {
+  const probarConexion = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'productos'));
+      console.log('✅ Conexión exitosa con Firebase. Documentos encontrados:');
+      querySnapshot.forEach((doc) => {
+        console.log(`🟢 ${doc.id}:`, doc.data());
+      });
+    } catch (error) {
+      console.error('❌ Error al conectar con Firebase:', error);
+    }
+  };
+
+  probarConexion();
+}, []);
+
+
+ const eliminarProducto = (index) => {
+  const nuevosProductos = [...productos];
+
+    nuevosProductos.splice(index, 1);
+            
+    setProductos(nuevosProductos);
+ }
+
+/*
   const eliminarProducto = (index) => {
+    console.log("Eliminar producto en índice:", index);
     Alert.alert(
       "Confirmación",
       "¿Está seguro de que desea eliminar este producto?",
@@ -19,12 +50,13 @@ export default function ListarProductos() {
           onPress: () => {
             const nuevosProductos = [...productos];
             nuevosProductos.splice(index, 1);
+            
             setProductos(nuevosProductos);
           }
         }
       ]
     );
-  };
+  };*/
 
   const agregarNuevo = (nuevoCliente) => {
     setProductos([...productos, nuevoCliente]);

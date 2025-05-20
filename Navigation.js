@@ -1,7 +1,6 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import ListarProductos from './Screens/ListarProductos';
-import AgregarProducto from './Screen/AgregarProducto';
+import ListarProductos from './Screens/ListarProducto'
+import AgregarProducto from './Screens/AgregarProducto'
 
 const Stack = createStackNavigator();
 
