@@ -4,8 +4,6 @@ import Navegacion from './Navigation';
 
 export default function App() {
   return (
-    <NavigationContainer>
       <Navegacion />
-    </NavigationContainer>
   );
 }
