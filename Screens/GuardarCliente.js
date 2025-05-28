@@ -1,93 +1,75 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, TextInput, Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
-// Al principio del archivo:
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../BaseDatos/Firebase";    // <-- esta ruta es crucial
-
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../BaseDatos/Firebase";
 
 export default function GuardarCliente() {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const clienteExistente = route.params?.cliente;
+
   const [cedula, setCedula] = useState("");
   const [nombre, setNombre] = useState("");
   const [apellidos, setApellidos] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [sexo, setSexo] = useState("");
-  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (clienteExistente) {
+      setCedula(clienteExistente.cedula || "");
+      setNombre(clienteExistente.nombre || "");
+      setApellidos(clienteExistente.apellidos || "");
+      setFechaNacimiento(clienteExistente.fechaNacimiento || "");
+      setSexo(clienteExistente.sexo || "");
+    }
+  }, [clienteExistente]);
 
   const guardarNuevo = async () => {
-    if (
-      !cedula.trim() ||
-      !nombre.trim() ||
-      !apellidos.trim() ||
-      !fechaNacimiento.trim() ||
-      !sexo.trim()
-    ) {
+    if (!cedula || !nombre || !apellidos || !fechaNacimiento || !sexo) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;
     }
 
     try {
-      await addDoc(collection(db, "clientes"), {
+      const clienteData = {
         cedula,
         nombre,
         apellidos,
         fechaNacimiento,
         sexo,
-      });
-      Alert.alert("Éxito", "Cliente guardado correctamente");
+      };
+
+      await setDoc(doc(db, "clientes", cedula), clienteData);
+      Alert.alert("Éxito", clienteExistente ? "Cliente actualizado" : "Cliente guardado");
       navigation.goBack();
     } catch (error) {
-      Alert.alert("Error", "No se pudo guardar el cliente");
       console.error("Error guardando cliente:", error);
+      Alert.alert("Error", "No se pudo guardar el cliente");
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Cédula:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ej. 603-092464-1000M"
-        value={cedula}
-        onChangeText={setCedula}
-      />
+      <TextInput style={styles.input} value={cedula} onChangeText={setCedula} />
 
       <Text style={styles.label}>Nombre:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre"
-        value={nombre}
-        onChangeText={setNombre}
-      />
+      <TextInput style={styles.input} value={nombre} onChangeText={setNombre} />
 
       <Text style={styles.label}>Apellidos:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Apellidos"
-        value={apellidos}
-        onChangeText={setApellidos}
-      />
+      <TextInput style={styles.input} value={apellidos} onChangeText={setApellidos} />
 
       <Text style={styles.label}>Fecha de Nacimiento:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="AAAA-MM-DD"
-        value={fechaNacimiento}
-        onChangeText={setFechaNacimiento}
-      />
+      <TextInput style={styles.input} value={fechaNacimiento} onChangeText={setFechaNacimiento} />
 
       <Text style={styles.label}>Sexo:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Masculino / Femenino"
-        value={sexo}
-        onChangeText={setSexo}
-      />
+      <TextInput style={styles.input} value={sexo} onChangeText={setSexo} />
 
       <TouchableOpacity style={styles.botonGuardar} onPress={guardarNuevo}>
         <Icon name="save" size={20} color="#fff" />
-        <Text style={styles.textoBoton}> Guardar</Text>
+        <Text style={styles.textoBoton}>{clienteExistente ? "Actualizar" : "Guardar"}</Text>
       </TouchableOpacity>
     </View>
   );

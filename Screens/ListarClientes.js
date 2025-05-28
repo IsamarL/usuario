@@ -31,8 +31,15 @@ export default function ListarCliente({ navigation }) {
         }
     };
 
-    const eliminarCliente = (index) => {
-        setClientes(clientes.filter((_, i) => i !== index));
+    const eliminarCliente = async (cedula) => {
+    try {
+        await deleteDoc(doc(db, "clientes", cedula));
+        Alert.alert("Éxito", "Cliente eliminado correctamente");
+        LeerDatos();
+    } catch (error) {
+        console.error("Error eliminando cliente:", error);
+        Alert.alert("Error", "No se pudo eliminar el cliente");
+    }
     };
 
     return (
@@ -67,7 +74,12 @@ export default function ListarCliente({ navigation }) {
                                     )
                                 }
                             >
-                                <Ionicons name="trash-bin-sharp" size={30} color="red" style={styles.basura} />
+                                <Entypo name="remove-user" size={24} color="red" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate("GuardarCliente", { cliente: item })}
+                            >
+                                <Entypo name="pencil" size={24} color="blue" />
                             </TouchableOpacity>
 
                             <Text>Cédula: {item.cedula}</Text>
