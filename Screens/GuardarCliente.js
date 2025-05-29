@@ -53,7 +53,7 @@ export default function GuardarCliente() {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Cédula:</Text>
-      <TextInput style={styles.input} value={cedula} onChangeText={setCedula} />
+      <TextInput style={styles.input} value={cedula} onChangeText={setCedula} editable={!clienteExistente}/>
 
       <Text style={styles.label}>Nombre:</Text>
       <TextInput style={styles.input} value={nombre} onChangeText={setNombre} />
